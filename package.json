@@ -1,13 +1,11 @@
 {
   "name": "text-sentiment-analysis",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC",
+  "description": "Perform sentiment analysis on exported Signal text messages",
+  "main": "main.js",
+  "scripts": {},
+  "author": "Bill Granfield <bill@billgranfield.com>",
+  "license": "MIT",
   "dependencies": {
     "bluebird": "^3.5.0",
     "lodash": "^4.17.4",
