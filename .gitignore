@@ -1,0 +1,9 @@
+# Signal input and sentiment output
+*.csv
+*.xml
+
+# Generated files
+node_modules/
+
+# IDE files
+.idea/
