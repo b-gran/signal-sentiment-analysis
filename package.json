@@ -1,7 +1,7 @@
 {
-  "name": "text-sentiment-analysis",
+  "name": "signal-sentiment-analysis",
   "version": "1.0.0",
-  "description": "Perform sentiment analysis on exported Signal text messages",
+  "description": "Perform sentiment analysis on exported Signal messages",
   "main": "main.js",
   "scripts": {},
   "author": "Bill Granfield <bill@billgranfield.com>",
