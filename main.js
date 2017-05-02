@@ -1,3 +1,10 @@
+/*
+ * Runs sentiment analysis on exported Signal messages located on the file system.
+ *
+ * This project was created partially to experiment with the Ramda library and point-free
+ * style, so some functions are more verbose than they otherwise could be.
+ */
+
 const yargs = require('yargs')
 const xml = require('xml2js')
 const fs = require('fs')
@@ -203,8 +210,7 @@ const argv = yargs
   ))
   .argv
 
-fs
-  .readFileAsync(argv.input, 'utf8')
+fs.readFileAsync(argv.input, 'utf8')
   .then(xml.parseStringAsync)
   .then(pickMessages)
   .then(messages => {
