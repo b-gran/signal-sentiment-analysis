@@ -227,9 +227,7 @@ fs.readFileAsync(argv.input, 'utf8')
     }),
     getNumberFilter(argv.number),
     sortByDate,
-    R.map(normalize),
-    R.map(addSentiment),
-    R.map(formatOutput),
+    R.map(R.pipe(normalize, addSentiment, formatOutput)),
     outputLines => {
       console.log('Date,Who,Message,Sentiment')
       console.log(outputLines.join('\n'))
