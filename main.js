@@ -215,25 +215,26 @@ const argv = yargs
 
 fs.readFileAsync(argv.input, 'utf8')
   .then(xml.parseStringAsync)
-  .then(pickMessages)
-  .then(messages => {
-    if (!argv.number) {
-      console.log('Available phone numbers:')
-      console.log(getAddresses(messages))
-      console.log('Re-run with --number to analyse messages')
-      process.exit(0)
+  .then(R.pipe(
+    pickMessages,
+    R.tap(messages => {
+      if (!argv.number) {
+        console.log('Available phone numbers:')
+        console.log(getAddresses(messages))
+        console.log('Re-run with --number to analyse messages')
+        return process.exit(0)
+      }
+    }),
+    getNumberFilter(argv.number),
+    sortByDate,
+    R.map(normalize),
+    R.map(addSentiment),
+    R.map(formatOutput),
+    outputLines => {
+      console.log('Date,Who,Message,Sentiment')
+      console.log(outputLines.join('\n'))
+      return process.exit(0)
     }
-
-    return getNumberFilter(argv.number)(messages)
-  })
-  .then(sortByDate)
-  .then(R.map(normalize))
-  .then(R.map(addSentiment))
-  .then(R.map(formatOutput))
-  .then(outputLines => {
-    console.log('Date,Who,Message,Sentiment')
-    console.log(outputLines.join('\n'))
-    return process.exit(0)
-  })
+  ))
 
   .catch(err => console.log('error', err) || process.exit(1))
