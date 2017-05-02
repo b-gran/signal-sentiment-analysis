@@ -1,5 +1,8 @@
 /*
  * Runs sentiment analysis on exported Signal messages located on the file system.
+ * The export format should be the default XML "plaintext backup."
+ *
+ * BE CAREFUL WITH YOUR PLAINTEXT BACKUPS.
  *
  * This project was created partially to experiment with the Ramda library and point-free
  * style, so some functions are more verbose than they otherwise could be.
