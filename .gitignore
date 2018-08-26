@@ -1,6 +1,7 @@
 # Signal input and sentiment output
 *.csv
 *.xml
+*.txt
 
 # Generated files
 node_modules/
