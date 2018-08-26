@@ -24,13 +24,25 @@ const { input } = argv
 
 readFile(input)
   .then(lines => {
-    console.log(normalize(lines))
+    const rawMessages = normalize(lines)
+    const messagesWithSentiment = addSentiment(rawMessages)
+    console.log(messagesWithSentiment)
   })
 
   .catch(err => {
     console.error('Encountered a fatal error')
     console.log(err)
   })
+
+// Add sentiment to normalized messages of the form returned by normalize()
+function addSentiment (messages) {
+  return messages.map(message => ({
+    timestamp: message.timestamp,
+    who: message.who,
+    text: message.text,
+    sentiment: sentiment.analyze(message.text)
+  }))
+}
 
 /*
  * Given the lines of a WhatsApp backup, returns the messages in normalized format.
