@@ -2,6 +2,7 @@ const R = require('ramda')
 const fs = require('fs')
 const yargs = require('yargs')
 const Sentiment = require('sentiment')
+const Util = require('./utils')
 
 const sentiment = new Sentiment({})
 
@@ -9,7 +10,7 @@ const TOKEN_NEW_MESSAGE = 'NEW_MESSAGE'
 const TOKEN_MESSAGE_LINE = 'MESSAGE_LINE'
 
 // Detect the start of messages.
-const re_chatMessage = /^(\d{2}\/\d{2}\/\d{4}), (\d{2}:\d{2}) - (.+): (.*)$/
+const re_chatMessage = /^(\d{2}\/\d{2}\/\d{4}), (\d{2}:\d{2}) - ([^:]+): (.*)$/
 const re_systemMessage = /^(\d{2}\/\d{2}\/\d{4}), (\d{2}:\d{2}) - (.*)$/
 
 // Pick out the date and time from the message start lines.
@@ -18,21 +19,58 @@ const re_time = /^(\d{2}):(\d{2})$/
 
 const argv = yargs
   .command('$0 <input>', 'perform sentiment analysis on WhatsApp chats')
+  .option('filter', { type: 'string' })
+  .option('scrub', { type: 'boolean' })
   .parse()
 
-const { input } = argv
+const { input, filter } = argv
 
 readFile(input)
   .then(lines => {
     const rawMessages = normalize(lines)
     const messagesWithSentiment = addSentiment(rawMessages)
-    console.log(messagesWithSentiment)
+
+    const filteredMessages = filter
+      ? messagesWithSentiment.filter(message => message.who === filter)
+      : messagesWithSentiment
+
+    const formatter = argv.scrub
+      ? require('./scrub')
+      : formatMessage
+
+    const header = argv.scrub
+      ? 'Date,Who,Sentiment'
+      : 'Date,Who,Message,Sentiment'
+
+    const csvLines = getCSVLines(filteredMessages, header, formatter)
+
+    console.log(csvLines.join('\n'))
   })
 
   .catch(err => {
     console.error('Encountered a fatal error')
     console.log(err)
   })
+
+function getCSVLines (sentimentMessages, header = 'Date,Who,Message,Sentiment', formatter = formatMessage) {
+  const lines = Array(sentimentMessages.length + 1)
+  lines[0] = header
+
+  sentimentMessages.forEach((message, i) => {
+    lines[i + 1] = formatter(message)
+  })
+  return lines
+}
+
+// Format a message of the form { timestamp, who, text, sentiment } for CSV output
+function formatMessage (message) {
+  return [
+    message.timestamp.toISOString(),
+    message.who,
+    removeCommaNewLine(message.text),
+    message.sentiment.score,
+  ].join(',')
+}
 
 // Add sentiment to normalized messages of the form returned by normalize()
 function addSentiment (messages) {
@@ -162,6 +200,14 @@ function getMessageTimestamp (messageDate, messageTime) {
   return new Date(Date.UTC(year, month - 1, day, hour, minute))
 }
 
+// Removes commas and newlines from the input
+function removeCommaNewLine (text) {
+  return R.pipe(
+    Util.replace(/[\r\n]/g, ' '),
+    Util.replace(/,/g, ';')
+  )(text)
+}
+
 // Promisified fs.readFile()
 function readFile (whatsappBackupName) {
   return new Promise((resolve, reject) => {
@@ -177,3 +223,5 @@ function panic (message) {
   console.error(message)
   throw new Error(message)
 }
+
+
