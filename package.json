@@ -7,11 +7,17 @@
   "author": "Bill Granfield <bill@billgranfield.com>",
   "license": "MIT",
   "dependencies": {
-    "bluebird": "^3.5.0",
-    "lodash": "^4.17.4",
-    "ramda": "^0.23.0",
-    "sentiment": "^4.0.0",
-    "xml2js": "^0.4.17",
-    "yargs": "^7.1.0"
-  }
+    "ramda": "^0.25.0",
+    "sentiment": "^5.0.1",
+    "yargs": "^12.0.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/b-gran/signal-sentiment-analysis.git"
+  },
+  "keywords": [],
+  "bugs": {
+    "url": "https://github.com/b-gran/signal-sentiment-analysis/issues"
+  },
+  "homepage": "https://github.com/b-gran/signal-sentiment-analysis#readme"
 }
